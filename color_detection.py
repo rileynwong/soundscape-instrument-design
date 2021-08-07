@@ -1,12 +1,36 @@
 import numpy as np
 import cv2
+import pygame.mixer
 
 
-# Capturing video through webcam
+### Set up sounds
+pygame.init()
+pygame.mixer.init()
+
+# Melody
+red_sound = pygame.mixer.Sound('loops/red_melody.wav')
+red_sound.set_volume(0.0)
+red_sound.play()
+
+# Chords
+green_sound = pygame.mixer.Sound('loops/green_chords.wav')
+green_sound.set_volume(0.0)
+green_sound.play()
+
+# Birds
+blue_sound = pygame.mixer.Sound('loops/blue_bird.wav')
+blue_sound.set_volume(0.0)
+blue_sound.play()
+
+
+### Capturing video through webcam
 webcam = cv2.VideoCapture(0)
 
-# Start a while loop
+### Main application loop
 while(1):
+    has_red = False
+    has_green = False
+    has_blue = False
 
     # Reading the video from the
     # webcam in image frames
@@ -73,6 +97,8 @@ while(1):
             cv2.putText(imageFrame, "Red Colour", (x, y),
                     cv2.FONT_HERSHEY_SIMPLEX, 1.0,
                     (0, 0, 255))
+            has_red = True
+
 
     # Creating contour to track green color
     contours, hierarchy = cv2.findContours(green_mask,
@@ -90,6 +116,8 @@ while(1):
             cv2.putText(imageFrame, "Green Colour", (x, y),
                     cv2.FONT_HERSHEY_SIMPLEX,
                     1.0, (0, 255, 0))
+            has_green = True
+
 
     # Creating contour to track blue color
     contours, hierarchy = cv2.findContours(blue_mask,
@@ -106,6 +134,29 @@ while(1):
             cv2.putText(imageFrame, "Blue Colour", (x, y),
                     cv2.FONT_HERSHEY_SIMPLEX,
                     1.0, (255, 0, 0))
+            has_blue = True
+
+    # Play sounds based on what's in the shot
+    if has_red:
+        # Play red sounds
+        red_sound.set_volume(1)
+    else:
+        # No red? Turn off sound
+        red_sound.set_volume(0.0)
+
+    if has_green:
+        # Play green sounds
+        green_sound.set_volume(1)
+    else:
+        # No green? Turn off sound
+        green_sound.set_volume(0.0)
+
+    if has_blue:
+        # Play blue sounds
+        blue_sound.set_volume(1)
+    else:
+        # No blue? Turn off sound
+        blue_sound.set_volume(0.0)
 
     # Program Termination
     cv2.imshow("Multiple Color Detection in Real-TIme", imageFrame)
